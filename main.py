@@ -15,7 +15,7 @@ def cadastrarProduto():
         quantidade = receberInteiro('Quantidade: ')
         precoDeCompra = receberFracionario('Preço de Compra: ')
         precoDeVenda = receberFracionario('Preço de Venda: ')
-        produto = {"quantidade": quantidade, "precoDeCompra": precoDeCompra, "precoDeVenda": precoDeVenda}
+        produto = {"nome": nome, "quantidade": quantidade, "precoDeCompra": precoDeCompra, "precoDeVenda": precoDeVenda}
         produtos[nome] = produto
 
         editarJson('produtos.json', produtos)
@@ -25,7 +25,33 @@ def vender():
     pass
 
 def editarProduto():
+    def mostrarProdutos(produtosDicionario):
+        contador = 0
+        for produto in produtosDicionario:
+            contador += 1
+            print(produto.capitalize() + ('-' * (45 - len(produto))) + ' | ', end='')
+
+            if contador % 3 == 0:
+                print('\n')
+
+        # print('\n')
+    
+    def mostrarProduto(produto):
+        print(f'Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço de Compra: {produto["precoDeCompra"]} | Preço de Venda: {produto["precoDeVenda"]}')
+
     produtos = abrirJson('produtos.json')
+
+    while True:
+        mostrarProdutos(produtos)
+        produtoParaEditar = str(input('Qual produto deseja editar?'))
+
+        if produtoParaEditar in produtos:
+            mostrarProduto(produtos[produtoParaEditar])
+            print('O que deseja editar?')
+            input()
+        else:
+            print('Este produto não está no sistema.')
+            input('pressione enter')
 
 if __name__ == '__main__':
     if not isfile('produtos.json'):
