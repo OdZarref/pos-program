@@ -2,6 +2,18 @@ from os.path import isfile
 from libs.jsonlibs import *
 from libs.etc import *
 
+def mostrarProdutos(produtosDicionario):
+    contador = 0
+    for indice in produtosDicionario:
+        contador += 1
+        nome = produtosDicionario[indice]['nome']
+        print(nome.capitalize() + ' ' + ('-' * (40 - len(nome))) + ' | ', end='')
+
+        if contador % 3 == 0:
+            print('\n')
+
+    print('\n')
+
 def verificarCadastroProduto(produtos, nome):
     for chave in produtos:
         if produtos[chave]['nome'] == nome:
@@ -27,21 +39,40 @@ def cadastrarProduto():
         print('Produto Cadastrado Com Sucesso!')
 
 def vender():
-    pass
+    produtosEstoque = abrirJson('produtos.json')
+    produtosAVender = list()
+
+    while True:
+        produtoAVender = dict()
+        mostrarProdutos(produtosEstoque)
+    
+        while True:
+            produtoAVender['nomeProdutoAVender'] = str(input('Qual produto adicionará?\n'))
+            idProdutoAVender = verificarCadastroProduto(produtosEstoque, produtoAVender['nomeProdutoAVender'])[-1]
+            if idProdutoAVender:
+                break
+            else: print('Produto Inválido!')
+
+        produtoAVender['idProduto'] = idProdutoAVender
+        produtoAVender['quantidadeAVender'] = receberInteiro('Quantidade: ')
+        produtosAVender.append(produtoAVender)
+        
+        escolhaVenda = str(input('Deseja adicionar mais produtos? ')).strip().lower()
+
+        if 's' not in escolhaVenda:
+            break
+    total = float()
+
+    for produto in produtosAVender:
+        nomeProduto = produtosEstoque[produto["idProduto"]]['nome']
+        precoProduto = produtosEstoque[produto['idProduto']]['precoDeVenda']
+        print(f'Produto: {nomeProduto} {("-" * (40 - len(nomeProduto)))} | Preço: {precoProduto} {"-" * 36} | Quantidade: {produto["quantidadeAVender"]} {"-" * 38}')
+        total += precoProduto * produto['quantidadeAVender']
+    
+    print(f'Total: {total}')
+
 
 def editarProduto():
-    def mostrarProdutos(produtosDicionario):
-        contador = 0
-        for indice in produtosDicionario:
-            contador += 1
-            nome = produtosDicionario[indice]['nome']
-            print(nome.capitalize() + ('-' * (40 - len(nome))) + ' | ', end='')
-
-            if contador % 3 == 0:
-                print('\n')
-
-        print('\n')
-    
     def mostrarProdutoOpcoes(produto):
         print(f'[ 1 ] Nome: {produto["nome"]}| [ 2 ] Quantidade: {produto["quantidade"]} | [ 3 ] Preço de Compra: {produto["precoDeCompra"]} | [ 4 ] Preço de Venda: {produto["precoDeVenda"]} | [ 0 ] Sair \n')
 
