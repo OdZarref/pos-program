@@ -64,11 +64,20 @@ def editarProduto():
                 editarJson('produtos.json', produtos)
                 break
             elif escolhaEditar == 2:
-                pass
+                novaQuantidade = receberInteiro('Nova Quantidade: ')
+                produtos[idProduto]['quantidade'] = novaQuantidade
+                editarJson('produtos.json', produtos)
+                break
             elif escolhaEditar == 3:
-                pass
+                novoPrecoDeCompra = receberFracionario('Novo Preço de Compra:\n')
+                produtos[idProduto]['precoDeCompra'] = novoPrecoDeCompra
+                editarJson('produtos.json', produtos)
+                break
             elif escolhaEditar == 4:
-                pass
+                novoPrecoDeVenda = receberFracionario('Novo Preço de Venda:\n')
+                produtos[idProduto]['precoDeVenda'] = novoPrecoDeVenda
+                editarJson('produtos.json', produtos)
+                break
         else:
             print('Este produto não está no sistema.') 
             input('pressione enter')
