@@ -2,6 +2,11 @@ from os.path import isfile
 from libs.jsonlibs import *
 from libs.etc import *
 
+def verificarCadastroProduto(produtos, nome):
+    for chave in produtos:
+        if produtos[chave]['nome'] == nome:
+            return [True, chave]
+
 def primeiraInicialização():
     open('produtos.json', 'w').write('{}')
 
@@ -9,14 +14,14 @@ def cadastrarProduto():
     produtos = abrirJson('produtos.json')
     nome = str(input('Nome do Produto:\n')).strip().lower()
     
-    if nome in produtos:
+    if verificarCadastroProduto(produtos, nome):
         print('Produto já cadastrado. Se deseja editar, escolha a opção "Editar Produto".')
     else:
         quantidade = receberInteiro('Quantidade:\n')
         precoDeCompra = receberFracionario('Preço de Compra:\n')
         precoDeVenda = receberFracionario('Preço de Venda:\n')
         produto = {"nome": nome, "quantidade": quantidade, "precoDeCompra": precoDeCompra, "precoDeVenda": precoDeVenda}
-        produtos[nome] = produto
+        produtos[f'{int(list(produtos)[-1]) + 1}'] = produto
 
         editarJson('produtos.json', produtos)
         print('Produto Cadastrado Com Sucesso!')
@@ -27,9 +32,10 @@ def vender():
 def editarProduto():
     def mostrarProdutos(produtosDicionario):
         contador = 0
-        for produto in produtosDicionario:
+        for indice in produtosDicionario:
             contador += 1
-            print(produto.capitalize() + ('-' * (40 - len(produto))) + ' | ', end='')
+            nome = produtosDicionario[indice]['nome']
+            print(nome.capitalize() + ('-' * (40 - len(nome))) + ' | ', end='')
 
             if contador % 3 == 0:
                 print('\n')
@@ -44,16 +50,17 @@ def editarProduto():
     while True:
         mostrarProdutos(produtos)
         produtoParaEditar = str(input('Qual produto deseja editar?\n'))
+        idProduto = verificarCadastroProduto(produtos, produtoParaEditar)[-1]
 
-        if produtoParaEditar in produtos:
-            mostrarProdutoOpcoes(produtos[produtoParaEditar])
+        if idProduto:
+            mostrarProdutoOpcoes(produtos[idProduto])
             escolhaEditar = receberInteiro('O que deseja editar?\n')
 
             if escolhaEditar == 0:
                 break
             elif escolhaEditar == 1:
                 novoNome = str(input('Novo nome:\n'))
-                produtos[produtoParaEditar]['nome'] = novoNome
+                produtos[idProduto]['nome'] = novoNome
                 editarJson('produtos.json', produtos)
                 break
             elif escolhaEditar == 2:
