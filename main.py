@@ -35,12 +35,16 @@ def cadastrarProduto():
         precoDeCompra = receberFracionario('Preço de Compra:\n')
         precoDeVenda = receberFracionario('Preço de Venda:\n')
         produto = {"nome": nome, "quantidade": quantidade, "precoDeCompra": precoDeCompra, "precoDeVenda": precoDeVenda}
-        produtos[f'{int(list(produtos)[-1]) + 1}'] = produto
+        
+        try:
+            produtos[f'{int(list(produtos)[-1]) + 1}'] = produto
+        except IndexError:
+            produtos['1'] = produto
 
         editarJson('produtos.json', produtos)
         print('Produto Cadastrado Com Sucesso!')
 
-class Caixa:
+class Caixa():
     def __init__(self):
         self.caixa = abrirJson('caixa.json')
 
