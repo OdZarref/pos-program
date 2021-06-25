@@ -70,11 +70,15 @@ class Caixa():
             editarJson('vendas.json', vendas)
 
         def modificarEstoque(self):
+            print('AQUI')
             for produto in produtosAVender:
                 produtosEstoque[produto['idProdutoAVender']]['quantidade'] = produtosEstoque[produto['idProdutoAVender']]['quantidade'] - produto['quantidadeAVender']
                 editarJson('produtos.json', produtosEstoque)
 
-            
+        def historicoVenda(self, valor):
+            self.caixa['historico'].append({"acao": "venda", "quantidade": valor})
+            editarJson('caixa.json', self.caixa)
+    
         produtosEstoque = abrirJson('produtos.json')
         produtosAVender = list()
 
@@ -95,6 +99,7 @@ class Caixa():
             escolhaVenda = str(input('Deseja adicionar mais produtos? ')).strip().lower()
 
             if 's' not in escolhaVenda: break
+
         total = float()
 
         for produto in produtosAVender:
@@ -108,11 +113,16 @@ class Caixa():
         escolha = receberInteiro('O que deseja fazer? [ 1 ] Finalizar Venda | [ 0 ] Cancelar Venda')
 
         if escolha == 1:
-            self.vender().modificarEstoque()
-            self.vender().salvarVenda()
+            modificarEstoque(self)
+            salvarVenda(self)
+            historicoVenda(self, total)
             print('Venda Finalizada')
 
     def abrirFecharCaixa(self, status=True):
+        if status:
+            valorCaixa = float(input('Qual o valor do caixa?\n'))
+            self.caixa['valor'] = valorCaixa
+
         self.caixa['status'] = status
         editarJson('caixa.json', self.caixa)
 
@@ -120,20 +130,24 @@ class Caixa():
         if self.caixa['status']: return True
 
     def inserirRetirarValor(self):
+        def receberValorAtualCaixa(self):
+            return self.caixa['valor']
+
         escolha = receberInteiro('O que deseja fazer? [ 1 ] Inserir [ 2 ] Retirar [ 0 ]')
+        valorCaixa = receberValorAtualCaixa()
 
         if escolha == 1:
-            quantidadeAInserir = receberInteiro('Quantidade a retirar:\n')
-            self.caixa['historico'].append({"acao": "entrada", "quantidade": quantidadeAInserir})
+            quantidadeAInserir = receberInteiro('Quantidade a inserir:\n')
+            self.caixa['valor'] = valorCaixa + quantidadeAInserir
         elif escolha == 2:
             quantidadeARetirar = receberInteiro('Quantidade a retirar:\n')
-            self.caixa['historico'].append({"acao": "retirada", "quantidade": -quantidadeARetirar})
+            self.caixa['valor'] = valorCaixa - quantidadeARetirar
 
         editarJson('caixa.json', self.caixa)
 
-    def inserirValorVenda(self, valor):
-        self.caixa['historico'].append({"acao": "venda", "quantidade": valor})
-        
+    def modificarCaixa(self, valorCaixa):
+        self.caixa['valor'] = valorCaixa
+        editarJson('caixa.json', self.caixa)
 
 def editarProduto():
     def mostrarProdutoOpcoes(produto):
@@ -180,19 +194,28 @@ if __name__ == '__main__':
     primeiraInicialização()
 
     while True:
-        escolha = int(input('O que quer fazer? [0]Sair [1]Venda [2]Cadastrar Produto [3]Editar Produto\n'))
+        escolha = int(input('O que quer fazer? [0]Sair [1]Venda e Caixa [2]Cadastrar Produto [3]Editar Produto\n'))
 
         if escolha == 0:
             break
         elif escolha == 1:
             caixa = Caixa()
+            escolha = int(input('[0] Sair [1]Venda [2]Editar Caixa '))
 
-            if not caixa.verificarCaixaAbertoFechado():
-                escolha = str(input('O caixa está fechado, deseja abri-lo? [ S / N ]')).strip().lower()
-
-                if 's' in escolha: caixa.abrirFecharCaixa()
-            elif caixa.verificarCaixaAbertoFechado():
+            if escolha == 1:
+                if not caixa.verificarCaixaAbertoFechado():
+                    print('O caixa está fechado. É necessário abri-lo.')
+                    caixa.abrirFecharCaixa()
                 caixa.vender()
+            else:
+                escolha = int(input('[0]Sair [1]Fechar Caixa [2]Editar Valor do Caixa'))
+
+                if escolha == 1:
+                    caixa.abrirFecharCaixa(False)
+                elif escolha == 2:
+                    novoValorCaixa = float(input('Novo Valor Caixa:\n'))
+                    caixa.modificarCaixa(novoValorCaixa)
+                    
     
         elif escolha == 2:
             cadastrarProduto()
