@@ -119,7 +119,7 @@ class Caixa():
                         print('Produto inválido, tente novamente.')
 
             if produtoAVender['nomeProdutoAVender'] == '0': break
-            
+
             produtoAVender['idProdutoAVender'] = idProdutoAVender
             produtoAVender['quantidadeAVender'] = receberInteiro('Quantidade: ')
             produtosAVender.append(produtoAVender)
@@ -223,7 +223,7 @@ if __name__ == '__main__':
     primeiraInicialização()
 
     while True:
-        escolha = receberInteiro('O que quer fazer? [0]Sair [1]Venda e Caixa [2]Cadastrar Produto [3]Editar Produto\n')
+        escolha = receberInteiro('O que quer fazer? [0]Sair [1]Venda e Caixa [2]Estoque [3]Relatório\n')
         limparConsole()
 
         if escolha == 0: break
@@ -247,7 +247,11 @@ if __name__ == '__main__':
                     caixa.modificarCaixa(novoValorCaixa)
                     
     
-        elif escolha == 2: cadastrarProduto()
+        elif escolha == 2:
+            escolha = receberInteiro('[0]Sair [1]CadasTrar Produto [2]Editar Produto\n')
+            if escolha == 1: cadastrarProduto()
+            elif escolha == 2: editarProduto()
+            
         elif escolha == 3: editarProduto()
         else: print('OPÇÃO INVÁLIDA.')
 
