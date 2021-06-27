@@ -1,4 +1,3 @@
-from os.path import isfile
 from libs.jsonlibs import *
 from libs.etc import *
 
@@ -18,11 +17,6 @@ def verificarCadastroProduto(produtos, nome):
     for chave in produtos:
         if produtos[chave]['nome'] == nome:
             return [True, chave]
-
-def primeiraInicialização():
-    if not isfile('produtos.json'): open('produtos.json', 'w').write('{}')
-    if not isfile('vendas.json'): open('vendas.json', 'w').write('[]')
-    if not isfile('caixa.json'): open('caixa.json', 'w').write('{"status": false, "historico": [], "valor": 0}')
 
 def cadastrarProduto():
     produtos = abrirJson('produtos.json')
@@ -178,6 +172,37 @@ class Caixa():
         self.caixa['valor'] = valorCaixa
         editarJson('caixa.json', self.caixa)
 
+
+class Relatorio():
+    def calcularRelatorio(self, opcao):
+        from datetime import datetime
+
+        dataHoje = datetime.now()
+        vendas = abrirJson('vendas.json')
+        lucro = 0
+        entrada = 0
+
+        for venda in vendas:
+            if opcao == 'dia':
+                if venda[2]['ano'] == dataHoje.year and venda[2]['mes'] == dataHoje.month and venda[2]['dia'] == dataHoje.day:
+                    lucro += venda[0]['lucro']
+                    entrada += venda[0]['entrada']
+            elif opcao == 'semana':
+                if venda[2]['ano'] == dataHoje.year and venda[2]['mes'] == dataHoje.month and venda[2]['dia'] > dataHoje.day - 7:
+                    lucro += venda[0]['lucro']
+                    entrada += venda[0]['entrada']
+            elif opcao == 'mes':
+                if venda[2]['ano'] == dataHoje.year and venda[2]['mes'] == dataHoje.month:
+                    lucro += venda[0]['lucro']
+                    entrada += venda[0]['entrada']
+            elif opcao == 'ano':
+                if venda[2]['ano'] == dataHoje.year:
+                    lucro += venda[0]['lucro']
+                    entrada += venda[0]['entrada']
+
+        print(f'Lucro: {lucro}\nEntrada no Caixa: {entrada}')
+
+
 def editarProduto():
     def mostrarProdutoOpcoes(produto):
         print(f'[ 1 ] Nome: {produto["nome"]}| [ 2 ] Quantidade: {produto["quantidade"]} | [ 3 ] Preço de Compra: {produto["precoDeCompra"]} | [ 4 ] Preço de Venda: {produto["precoDeVenda"]} | [ 0 ] Sair \n')
@@ -252,7 +277,14 @@ if __name__ == '__main__':
             if escolha == 1: cadastrarProduto()
             elif escolha == 2: editarProduto()
             
-        elif escolha == 3: editarProduto()
+        elif escolha == 3:
+            escolha = receberInteiro('[0]Sair [1]Relatório do Dia [2]Relatório da Semana [3]Relatório do Mês [4]Relatório do Ano\n')
+            relatorio = Relatorio()
+
+            if escolha == 1: relatorio.calcularRelatorio('dia')
+            elif escolha == 2: relatorio.calcularRelatorio('semana')
+            elif escolha == 3: relatorio.calcularRelatorio('mes')
+            elif escolha == 4: relatorio.calcularRelatorio('ano')
         else: print('OPÇÃO INVÁLIDA.')
 
         print('-=' * 40)
