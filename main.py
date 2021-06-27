@@ -50,6 +50,24 @@ class Caixa():
 
     def vender(self):
         def salvarVenda(self):
+            def calcularLucroEEntrada(self):
+                lucroEEntrada = dict()
+                totalEntrada = 0
+                totalLucro = 0
+                
+                for produto in produtosAVender:
+                    precoDeCompra = produtosEstoque[f'{produto["idProdutoAVender"]}']['precoDeCompra']
+                    precoDeVenda = produtosEstoque[f'{produto["idProdutoAVender"]}']['precoDeVenda']
+                    quantidade = produto['quantidadeAVender']
+                    totalEntrada += (precoDeVenda * quantidade)
+                    totalLucro += (precoDeVenda * quantidade) - (precoDeCompra * quantidade)
+                
+                lucroEEntrada['lucro'] = totalLucro
+                lucroEEntrada['entrada'] = totalEntrada
+
+                return lucroEEntrada
+
+
             from datetime import datetime
 
             vendas = abrirJson('vendas.json')
@@ -61,7 +79,9 @@ class Caixa():
             dataVenda['hora'] = datetime.now().hour
             dataVenda['minuto'] = datetime.now().minute
             dataVenda['segundo'] = datetime.now().second
+            EntradaELucro = calcularLucroEEntrada(self)
             venda = list()
+            venda.append(EntradaELucro)
             venda.append(produtosAVender)
             venda.append(dataVenda)
 
