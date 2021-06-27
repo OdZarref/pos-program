@@ -90,13 +90,13 @@ class Caixa():
             editarJson('vendas.json', vendas)
 
         def modificarEstoque(self):
-            print('AQUI')
             for produto in produtosAVender:
                 produtosEstoque[produto['idProdutoAVender']]['quantidade'] = produtosEstoque[produto['idProdutoAVender']]['quantidade'] - produto['quantidadeAVender']
                 editarJson('produtos.json', produtosEstoque)
 
         def historicoVenda(self, valor):
             self.caixa['historico'].append({"acao": "venda", "quantidade": valor})
+            self.caixa['valor'] += valor
             editarJson('caixa.json', self.caixa)
     
         produtosEstoque = abrirJson('produtos.json')
@@ -107,16 +107,25 @@ class Caixa():
             mostrarProdutos(produtosEstoque)
         
             while True:
-                produtoAVender['nomeProdutoAVender'] = str(input('Qual produto adicionará?\n'))
-                idProdutoAVender = verificarCadastroProduto(produtosEstoque, produtoAVender['nomeProdutoAVender'])[-1]
-                if idProdutoAVender: break
-                else: print('Produto Inválido!')
+                produtoAVender['nomeProdutoAVender'] = str(input('Qual produto adicionará? [ 0 ] Sair\n')).strip().lower()
+                try:
+                    idProdutoAVender = verificarCadastroProduto(produtosEstoque, produtoAVender['nomeProdutoAVender'])[-1]
+                    limparConsole()
+                    break
+                except TypeError:
+                    if produtoAVender['nomeProdutoAVender'] == '0': break
+                    else:
+                        limparConsole()
+                        print('Produto inválido, tente novamente.')
 
+            if produtoAVender['nomeProdutoAVender'] == '0': break
+            
             produtoAVender['idProdutoAVender'] = idProdutoAVender
             produtoAVender['quantidadeAVender'] = receberInteiro('Quantidade: ')
             produtosAVender.append(produtoAVender)
             
-            escolhaVenda = str(input('Deseja adicionar mais produtos? ')).strip().lower()
+            escolhaVenda = str(input('Deseja adicionar mais produtos? [ S / N ]\n')).strip().lower()
+            limparConsole()
 
             if 's' not in escolhaVenda: break
 
@@ -130,7 +139,7 @@ class Caixa():
         
         print(f'Total: {total}')
 
-        escolha = receberInteiro('O que deseja fazer? [ 1 ] Finalizar Venda | [ 0 ] Cancelar Venda')
+        escolha = receberInteiro('O que deseja fazer? [ 1 ] Finalizar Venda | [ 0 ] Cancelar Venda\n')
 
         if escolha == 1:
             modificarEstoque(self)
@@ -214,34 +223,32 @@ if __name__ == '__main__':
     primeiraInicialização()
 
     while True:
-        escolha = int(input('O que quer fazer? [0]Sair [1]Venda e Caixa [2]Cadastrar Produto [3]Editar Produto\n'))
+        escolha = receberInteiro('O que quer fazer? [0]Sair [1]Venda e Caixa [2]Cadastrar Produto [3]Editar Produto\n')
+        limparConsole()
 
-        if escolha == 0:
-            break
+        if escolha == 0: break
         elif escolha == 1:
             caixa = Caixa()
-            escolha = int(input('[0] Sair [1]Venda [2]Editar Caixa '))
+            escolha = receberInteiro('[0] Sair [1]Venda [2]Editar Caixa\n')
+            limparConsole()
 
             if escolha == 1:
                 if not caixa.verificarCaixaAbertoFechado():
                     print('O caixa está fechado. É necessário abri-lo.')
                     caixa.abrirFecharCaixa()
                 caixa.vender()
-            else:
-                escolha = int(input('[0]Sair [1]Fechar Caixa [2]Editar Valor do Caixa'))
+            elif escolha == 2:
+                escolha = receberInteiro('[0]Sair [1]Fechar Caixa [2]Editar Valor do Caixa')
+                limparConsole()
 
-                if escolha == 1:
-                    caixa.abrirFecharCaixa(False)
+                if escolha == 1: caixa.abrirFecharCaixa(False)
                 elif escolha == 2:
                     novoValorCaixa = float(input('Novo Valor Caixa:\n'))
                     caixa.modificarCaixa(novoValorCaixa)
                     
     
-        elif escolha == 2:
-            cadastrarProduto()
-        elif escolha == 3:
-            editarProduto()
-        else:
-            print('OPÇÃO INVÁLIDA.')
+        elif escolha == 2: cadastrarProduto()
+        elif escolha == 3: editarProduto()
+        else: print('OPÇÃO INVÁLIDA.')
 
         print('-=' * 40)
