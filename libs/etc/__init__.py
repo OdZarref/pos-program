@@ -14,3 +14,8 @@ def receberFracionario(texto):
             return fracionario
         except ValueError:
             print('VALOR INVÁLIDO!')
+
+def limparConsole():
+    from os import system
+
+    system('cls')
