@@ -1,42 +1,69 @@
 from libs.jsonlibs import *
 from libs.etc import *
 
-def mostrarProdutos(produtosDicionario):
-    contador = 0
-    for indice in produtosDicionario:
-        contador += 1
-        nome = produtosDicionario[indice]['nome']
-        print(nome.capitalize() + ' ' + ('-' * (40 - len(nome))) + ' | ', end='')
 
-        if contador % 3 == 0:
-            print('\n')
-
-    print('\n')
-
-def verificarCadastroProduto(produtos, nome):
-    for chave in produtos:
-        if produtos[chave]['nome'] == nome:
-            return [True, chave]
-
-def cadastrarProduto():
-    produtos = abrirJson('produtos.json')
-    nome = str(input('Nome do Produto:\n')).strip().lower()
-    
-    if verificarCadastroProduto(produtos, nome):
-        print('Produto já cadastrado. Se deseja editar, escolha a opção "Editar Produto".')
-    else:
-        quantidade = receberInteiro('Quantidade:\n')
-        precoDeCompra = receberFracionario('Preço de Compra:\n')
-        precoDeVenda = receberFracionario('Preço de Venda:\n')
-        produto = {"nome": nome, "quantidade": quantidade, "precoDeCompra": precoDeCompra, "precoDeVenda": precoDeVenda}
+class Estoque():
+    def cadastrarProduto(self):
+        produtos = abrirJson('produtos.json')
+        nome = str(input('Nome do Produto:\n')).strip().lower()
         
-        try:
-            produtos[f'{int(list(produtos)[-1]) + 1}'] = produto
-        except IndexError:
-            produtos['1'] = produto
+        if verificarCadastroProduto(produtos, nome):
+            print('Produto já cadastrado. Se deseja editar, escolha a opção "Editar Produto".')
+        else:
+            quantidade = receberInteiro('Quantidade:\n')
+            precoDeCompra = receberFracionario('Preço de Compra:\n')
+            precoDeVenda = receberFracionario('Preço de Venda:\n')
+            produto = {"nome": nome, "quantidade": quantidade, "precoDeCompra": precoDeCompra, "precoDeVenda": precoDeVenda}
+            
+            try:
+                produtos[f'{int(list(produtos)[-1]) + 1}'] = produto
+            except IndexError:
+                produtos['1'] = produto
 
-        editarJson('produtos.json', produtos)
-        print('Produto Cadastrado Com Sucesso!')
+            editarJson('produtos.json', produtos)
+            print('Produto Cadastrado Com Sucesso!')
+
+    def editarProduto(self):
+        def mostrarProdutoOpcoes(produto):
+            print(f'[ 1 ] Nome: {produto["nome"]}| [ 2 ] Quantidade: {produto["quantidade"]} | [ 3 ] Preço de Compra: {produto["precoDeCompra"]} | [ 4 ] Preço de Venda: {produto["precoDeVenda"]} | [ 0 ] Sair \n')
+
+        produtos = abrirJson('produtos.json')
+
+        while True:
+            mostrarProdutos(produtos)
+            produtoParaEditar = str(input('Qual produto deseja editar?\n'))
+            idProduto = verificarCadastroProduto(produtos, produtoParaEditar)[-1]
+
+            if idProduto:
+                mostrarProdutoOpcoes(produtos[idProduto])
+                escolhaEditar = receberInteiro('O que deseja editar?\n')
+
+                if escolhaEditar == 0:
+                    break
+                elif escolhaEditar == 1:
+                    novoNome = str(input('Novo nome:\n'))
+                    produtos[idProduto]['nome'] = novoNome
+                    editarJson('produtos.json', produtos)
+                    break
+                elif escolhaEditar == 2:
+                    novaQuantidade = receberInteiro('Nova Quantidade: ')
+                    produtos[idProduto]['quantidade'] = novaQuantidade
+                    editarJson('produtos.json', produtos)
+                    break
+                elif escolhaEditar == 3:
+                    novoPrecoDeCompra = receberFracionario('Novo Preço de Compra:\n')
+                    produtos[idProduto]['precoDeCompra'] = novoPrecoDeCompra
+                    editarJson('produtos.json', produtos)
+                    break
+                elif escolhaEditar == 4:
+                    novoPrecoDeVenda = receberFracionario('Novo Preço de Venda:\n')
+                    produtos[idProduto]['precoDeVenda'] = novoPrecoDeVenda
+                    editarJson('produtos.json', produtos)
+                    break
+            else:
+                print('Este produto não está no sistema.') 
+                input('pressione enter')
+
 
 class Caixa():
     def __init__(self):
@@ -203,47 +230,6 @@ class Relatorio():
         print(f'Lucro: {lucro}\nEntrada no Caixa: {entrada}')
 
 
-def editarProduto():
-    def mostrarProdutoOpcoes(produto):
-        print(f'[ 1 ] Nome: {produto["nome"]}| [ 2 ] Quantidade: {produto["quantidade"]} | [ 3 ] Preço de Compra: {produto["precoDeCompra"]} | [ 4 ] Preço de Venda: {produto["precoDeVenda"]} | [ 0 ] Sair \n')
-
-    produtos = abrirJson('produtos.json')
-
-    while True:
-        mostrarProdutos(produtos)
-        produtoParaEditar = str(input('Qual produto deseja editar?\n'))
-        idProduto = verificarCadastroProduto(produtos, produtoParaEditar)[-1]
-
-        if idProduto:
-            mostrarProdutoOpcoes(produtos[idProduto])
-            escolhaEditar = receberInteiro('O que deseja editar?\n')
-
-            if escolhaEditar == 0:
-                break
-            elif escolhaEditar == 1:
-                novoNome = str(input('Novo nome:\n'))
-                produtos[idProduto]['nome'] = novoNome
-                editarJson('produtos.json', produtos)
-                break
-            elif escolhaEditar == 2:
-                novaQuantidade = receberInteiro('Nova Quantidade: ')
-                produtos[idProduto]['quantidade'] = novaQuantidade
-                editarJson('produtos.json', produtos)
-                break
-            elif escolhaEditar == 3:
-                novoPrecoDeCompra = receberFracionario('Novo Preço de Compra:\n')
-                produtos[idProduto]['precoDeCompra'] = novoPrecoDeCompra
-                editarJson('produtos.json', produtos)
-                break
-            elif escolhaEditar == 4:
-                novoPrecoDeVenda = receberFracionario('Novo Preço de Venda:\n')
-                produtos[idProduto]['precoDeVenda'] = novoPrecoDeVenda
-                editarJson('produtos.json', produtos)
-                break
-        else:
-            print('Este produto não está no sistema.') 
-            input('pressione enter')
-
 if __name__ == '__main__':
     primeiraInicialização()
 
@@ -271,11 +257,11 @@ if __name__ == '__main__':
                     novoValorCaixa = float(input('Novo Valor Caixa:\n'))
                     caixa.modificarCaixa(novoValorCaixa)
                     
-    
         elif escolha == 2:
+            estoque = Estoque()
             escolha = receberInteiro('[0]Sair [1]CadasTrar Produto [2]Editar Produto\n')
-            if escolha == 1: cadastrarProduto()
-            elif escolha == 2: editarProduto()
+            if escolha == 1: estoque.cadastrarProduto()
+            elif escolha == 2: estoque.editarProduto()
             
         elif escolha == 3:
             escolha = receberInteiro('[0]Sair [1]Relatório do Dia [2]Relatório da Semana [3]Relatório do Mês [4]Relatório do Ano\n')
