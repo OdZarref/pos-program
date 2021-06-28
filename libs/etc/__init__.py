@@ -28,3 +28,20 @@ def primeiraInicialização():
     if not isfile('produtos.json'): open('produtos.json', 'w').write('{}')
     if not isfile('vendas.json'): open('vendas.json', 'w').write('[]')
     if not isfile('caixa.json'): open('caixa.json', 'w').write('{"status": false, "historico": [], "valor": 0}')
+
+def mostrarProdutos(produtosDicionario):
+    contador = 0
+    for indice in produtosDicionario:
+        contador += 1
+        nome = produtosDicionario[indice]['nome']
+        print(nome.capitalize() + ' ' + ('-' * (40 - len(nome))) + ' | ', end='')
+
+        if contador % 3 == 0:
+            print('\n')
+
+    print('\n')
+
+def verificarCadastroProduto(produtos, nome):
+    for chave in produtos:
+        if produtos[chave]['nome'] == nome:
+            return [True, chave]
