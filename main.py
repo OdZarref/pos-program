@@ -23,6 +23,18 @@ class Estoque():
             editarJson('produtos.json', produtos)
             print('Produto Cadastrado Com Sucesso!')
 
+
+    def calcularValorEstoque(self):
+        produtos = abrirJson('produtos.json')
+        totalEstoque = 0
+        potencialDeVenda = 0
+
+        for indice in produtos:
+            totalEstoque += (produtos[indice]['precoDeCompra'] * produtos[indice]['quantidade'])
+            potencialDeVenda += (produtos[indice]['precoDeVenda'] * produtos[indice]['quantidade'])
+
+        print(f'Valor em Estoque: R$ {totalEstoque:.2f}\nPotencial de Venda: R$ {potencialDeVenda:.2f}')
+
     def editarProduto(self):
         def mostrarProdutoOpcoes(produto):
             print(f'[ 1 ] Nome: {produto["nome"]}| [ 2 ] Quantidade: {produto["quantidade"]} | [ 3 ] Preço de Compra: {produto["precoDeCompra"]} | [ 4 ] Preço de Venda: {produto["precoDeVenda"]} | [ 0 ] Sair \n')
@@ -259,9 +271,10 @@ if __name__ == '__main__':
                     
         elif escolha == 2:
             estoque = Estoque()
-            escolha = receberInteiro('[0]Sair [1]CadasTrar Produto [2]Editar Produto\n')
+            escolha = receberInteiro('[0]Sair [1]CadasTrar Produto [2]Editar Produto [3]Conferir Valor em Estoque\n')
             if escolha == 1: estoque.cadastrarProduto()
             elif escolha == 2: estoque.editarProduto()
+            elif escolha == 3: estoque.calcularValorEstoque()
             
         elif escolha == 3:
             escolha = receberInteiro('[0]Sair [1]Relatório do Dia [2]Relatório da Semana [3]Relatório do Mês [4]Relatório do Ano\n')
