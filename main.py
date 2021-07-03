@@ -190,19 +190,25 @@ class Caixa():
 
     def verificarCaixaAbertoFechado(self):
         if self.caixa['status']: return True
+    
+    def consultarCaixa(self):
+        print(f'Valor em Caixa: {self.caixa["valor"]:.2f}')
 
     def inserirRetirarValor(self):
         def receberValorAtualCaixa(self):
             return self.caixa['valor']
 
-        escolha = receberInteiro('O que deseja fazer? [ 1 ] Inserir [ 2 ] Retirar [ 0 ]')
-        valorCaixa = receberValorAtualCaixa()
+        escolha = receberInteiro('O que deseja fazer? [ 1 ] Inserir [ 2 ] Retirar [ 0 ] Sair')
+        valorCaixa = receberValorAtualCaixa(self)
 
         if escolha == 1:
-            quantidadeAInserir = receberInteiro('Quantidade a inserir:\n')
+            quantidadeAInserir = receberFracionario('Quantidade a inserir:\n')
+            self.caixa['historico'].append({'acao': 'insercao', 'quantidade': quantidadeAInserir})
             self.caixa['valor'] = valorCaixa + quantidadeAInserir
         elif escolha == 2:
             quantidadeARetirar = receberInteiro('Quantidade a retirar:\n')
+            motivo = str(input('Qual o motivo da retirada? '))
+            self.caixa['historico'].append({'acao': 'retirada', 'quantidade': quantidadeARetirar, 'motivo': motivo})
             self.caixa['valor'] = valorCaixa - quantidadeARetirar
 
         editarJson('caixa.json', self.caixa)
@@ -246,7 +252,7 @@ if __name__ == '__main__':
     primeiraInicialização()
 
     while True:
-        escolha = receberInteiro('O que quer fazer? [0]Sair [1]Venda e Caixa [2]Estoque [3]Relatório\n')
+        escolha = receberInteiro('O que quer fazer? [1]Venda e Caixa [2]Estoque [3]Relatório [0]Sair\n')
         limparConsole()
 
         if escolha == 0: break
@@ -261,11 +267,12 @@ if __name__ == '__main__':
                     caixa.abrirFecharCaixa()
                 caixa.vender()
             elif escolha == 2:
-                escolha = receberInteiro('[0]Sair [1]Fechar Caixa [2]Editar Valor do Caixa')
+                escolha = receberInteiro('[1]Consultar Caixa [2]Inserir ou Retirar Valor do Caixa [3]Editar Valor do Caixa [0]Sair\n')
                 limparConsole()
 
-                if escolha == 1: caixa.abrirFecharCaixa(False)
-                elif escolha == 2:
+                if escolha == 1: caixa.consultarCaixa()
+                elif escolha == 2: caixa.inserirRetirarValor()
+                elif escolha == 3:
                     novoValorCaixa = float(input('Novo Valor Caixa:\n'))
                     caixa.modificarCaixa(novoValorCaixa)
                     
