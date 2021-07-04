@@ -219,7 +219,7 @@ class Caixa():
 
 
 class Relatorio():
-    def calcularRelatorio(self, opcao):
+    def calcularRelatorio(self, opcao, dataEspecifica=None):         
         from datetime import datetime
 
         dataHoje = datetime.now()
@@ -242,6 +242,10 @@ class Relatorio():
                     entrada += venda[0]['entrada']
             elif opcao == 'ano':
                 if venda[2]['ano'] == dataHoje.year:
+                    lucro += venda[0]['lucro']
+                    entrada += venda[0]['entrada']
+            elif opcao == 'especifico':
+                if venda[2]['ano'] == dataEspecifica['ano'] and venda[2]['mes'] == dataEspecifica['mes'] and venda[2]['dia'] == dataEspecifica['dia']:
                     lucro += venda[0]['lucro']
                     entrada += venda[0]['entrada']
 
@@ -291,6 +295,15 @@ if __name__ == '__main__':
             elif escolha == 2: relatorio.calcularRelatorio('semana')
             elif escolha == 3: relatorio.calcularRelatorio('mes')
             elif escolha == 4: relatorio.calcularRelatorio('ano')
+            elif escolha == 5:
+                dados = str(input('Data: dd/mm/aaaa')).split()
+                dataEspecifica = dict()
+                dataEspecifica['dia'] = int(dados[0])
+                dataEspecifica['mes'] = int(dados[1])
+                dataEspecifica['ano'] = int(dados[-1])
+                print(dataEspecifica)
+                relatorio.calcularRelatorio('especifico', dataEspecifica)
+
         else: print('OPÇÃO INVÁLIDA.')
 
         print('-=' * 40)
