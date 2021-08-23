@@ -8,5 +8,5 @@ def abrirJson(nomeArquivo):
 
 def editarJson(nomeArquivo, novoJson):
     with open(nomeArquivo, 'w') as arquivo:
-        json.dump(novoJson, arquivo, indent=4)
+        json.dump(novoJson, arquivo)
         arquivo.close()

@@ -10,6 +10,38 @@ class EventosBotoes():
         for indice in self.varTreeView.selection():
             self.frameEditarProduto(self.varTreeView.item(indice, 'values'))
 
+    def hoverBotaoVendas(self, event):
+        self.botaoVendasImagemD = tk.PhotoImage(file='images\sellD.png')
+        self.botaoVendas.configure(image=self.botaoVendasImagemD)
+
+    def leaveBotaoVendas(self, event):
+        self.botaoVendasImagemL = tk.PhotoImage(file='images\sellL.png')
+        self.botaoVendas.configure(image=self.botaoVendasImagemL)
+
+    def hoverBotaoEstoque(self, event):
+        self.botaoEstoqueImagemD = tk.PhotoImage(file='images\estoqueD.png')
+        self.botaoEstoque.configure(image=self.botaoEstoqueImagemD)
+
+    def leaveBotaoEstoque(self, event):
+        self.botaoEstoqueImagemL = tk.PhotoImage(file='images\estoqueL.png')
+        self.botaoEstoque.configure(image=self.botaoEstoqueImagemL)
+
+    def hoverBotaoCaixa(self, event):
+        self.botaoCaixaImagemD = tk.PhotoImage(file='images\caixaD.png')
+        self.botaoCaixa.configure(image=self.botaoCaixaImagemD)
+
+    def leaveBotaoCaixa(self, event):
+        self.botaoCaixaImagemL = tk.PhotoImage(file='images\CaixaL.png')
+        self.botaoCaixa.configure(image=self.botaoCaixaImagemL)
+
+    def hoverBotaoRelatorio(self, event):
+        self.botaoRelatorioImagemD = tk.PhotoImage(file='images\elatorioD.png')
+        self.botaoRelatorio.configure(image=self.botaoRelatorioImagemD)
+
+    def leaveBotaoRelatorio(self, event):
+        self.botaoRelatorioImagemL = tk.PhotoImage(file='images\elatorioL.png')
+        self.botaoRelatorio.configure(image=self.botaoRelatorioImagemL)
+
 
 class EntryPlaceHolder(tk.Entry):
     def __init__(self, master=None, placeholder='', bg='white', highlightbackground=None, highlightthickness=0, fg=None):
@@ -126,11 +158,12 @@ class FuncoesGerais():
             precoDeVenda = float(produto[2])
             quantidade = int(produto[1])
             lucro = (precoDeVenda - precoDeCusto) * quantidade
+            lucro = float(f'{lucro:.2f}')
             lucroTotal += lucro
             venda['produtos'].append(
                 {'nome': nome, 'quantidade': quantidade, 'lucro': lucro})
 
-        venda['lucro'] = lucroTotal
+        venda['lucro'] = float(f'{lucroTotal:.2f}')
         vendas.append(venda)
         editarJson('vendas.json', vendas)
 
@@ -151,7 +184,7 @@ class FuncoesGerais():
 
         def atualizarTreeViewEEntryTotal(self):
             self.varTreeView.insert('', tk.END, values=(
-            descricaoProduto, quantidade, preco))
+                descricaoProduto, quantidade, preco))
 
             if self.varTreeView.get_children():
                 total = 0
@@ -159,14 +192,18 @@ class FuncoesGerais():
                     contador = 0
                     for valor in self.varTreeView.item(item)['values']:
                         contador += 1
-                        if contador == 2: quantidadeTreeView = valor
-                        if contador == 3: precoTreeView = valor
+                        if contador == 2:
+                            quantidadeTreeView = valor
+                        if contador == 3:
+                            precoTreeView = valor
 
                     total += (quantidadeTreeView * float(precoTreeView))
 
                 totalCarrinho = self.labelTotal.cget('text')
-                if totalCarrinho != 'Total: ': totalCarrinho = float(totalCarrinho.replace('Total: ', ''))
-                else: totalCarrinho = 0
+                if totalCarrinho != 'Total: ':
+                    totalCarrinho = float(totalCarrinho.replace('Total: ', ''))
+                else:
+                    totalCarrinho = 0
                 totalCarrinho = total
                 self.labelTotal.configure(text='Total: ' + str(totalCarrinho))
 
@@ -177,7 +214,8 @@ class FuncoesGerais():
         if self.validarEntryInt(quantidade):
             self.entryQuantidade.configure(highlightbackground=self.color1)
         else:
-            self.entryQuantidade.configure(highlightbackground='#ff0000')  # , highlightthickness=2
+            self.entryQuantidade.configure(
+                highlightbackground='#ff0000')  # , highlightthickness=2
 
         if self.validarExistenciaDeProduto(descricaoProduto):
             self.entryDescricao.configure(highlightbackground=self.color1)
@@ -475,16 +513,21 @@ class CriarFrames():
                     for indice in self.varTreeView.get_children():
                         contador = 0
                         for valorItem in self.varTreeView.item(indice)['values']:
-                            if contador == 1: precoDeCusto = float(valorItem)
-                            elif contador == 2: precoDeVenda = float(valorItem)
-                            elif contador == 5: quantidade = int(valorItem)
+                            if contador == 1:
+                                precoDeCusto = float(valorItem)
+                            elif contador == 2:
+                                precoDeVenda = float(valorItem)
+                            elif contador == 5:
+                                quantidade = int(valorItem)
                             contador += 1
 
                         totalEmEstoque += (precoDeCusto * quantidade)
                         potencialDeVenda += (precoDeVenda * quantidade)
-                        
-                    if escolha: return f'{totalEmEstoque:.2f}'
-                    else: return f'{potencialDeVenda:.2f}'
+
+                    if escolha:
+                        return f'{totalEmEstoque:.2f}'
+                    else:
+                        return f'{potencialDeVenda:.2f}'
 
             self.varFrameUtilDireito = tk.Frame(
                 self.varFrameLateralDireito, background=self.color1)
@@ -496,10 +539,12 @@ class CriarFrames():
             self.botaoAdicionar.place(
                 relx=0.2, rely=0.01, relwidth=0.6, relheight=0.04)
 
-            labelTotalEmEstoque = tk.Label(self.varFrameUtilDireito, text='Total Estoque: ' + calculatTotalEstoqueEPotencialDeVenda(self, 1))
+            labelTotalEmEstoque = tk.Label(
+                self.varFrameUtilDireito, text='Total Estoque: ' + calculatTotalEstoqueEPotencialDeVenda(self, 1))
             labelTotalEmEstoque.place(relx=0.08, rely=0.9, relheight=0.04)
 
-            labelPotencialVendas = tk.Label(self.varFrameUtilDireito, text='Potencial Vendas: ' + calculatTotalEstoqueEPotencialDeVenda(self, 0))
+            labelPotencialVendas = tk.Label(
+                self.varFrameUtilDireito, text='Potencial Vendas: ' + calculatTotalEstoqueEPotencialDeVenda(self, 0))
             labelPotencialVendas.place(relx=0.02, rely=0.95, relheight=0.04)
 
         self.destruirFilhos([self.varFrameLateralDireito])
@@ -611,23 +656,31 @@ class Aplicacao(CriarFrames, FuncoesGerais, EventosBotoes, BancoDeDados):
                 self.botaoVendas = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoVendasImagem,
                                              command=self.frameVendas, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoVendas.place(relx=0.24, rely=0.05)
+                self.botaoVendas.bind("<Enter>", self.hoverBotaoVendas)
+                self.botaoVendas.bind("<Leave>", self.leaveBotaoVendas)
 
                 self.botaoEstoqueImagem = tk.PhotoImage(
                     file='images\estoqueL.png')
                 self.botaoEstoque = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoEstoqueImagem,
                                               command=self.frameEstoque, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoEstoque.place(relx=0.24, rely=0.15)
+                self.botaoEstoque.bind("<Enter>", self.hoverBotaoEstoque)
+                self.botaoEstoque.bind("<Leave>", self.leaveBotaoEstoque)
 
                 self.botaoCaixaImagem = tk.PhotoImage(file='images\caixaL.png')
                 self.botaoCaixa = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoCaixaImagem,
                                             command=self.frameCaixa, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoCaixa.place(relx=0.24, rely=0.25)
+                self.botaoCaixa.bind("<Enter>", self.hoverBotaoCaixa)
+                self.botaoCaixa.bind("<Leave>", self.leaveBotaoCaixa)
 
                 self.botaoRelatorioImagem = tk.PhotoImage(
                     file='images\elatorioL.png')
                 self.botaoRelatorio = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoRelatorioImagem,
                                                 command=self.frameRelatorio, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoRelatorio.place(relx=0.24, rely=0.35)
+                self.botaoRelatorio.bind("<Enter>", self.hoverBotaoRelatorio)
+                self.botaoRelatorio.bind("<Leave>", self.leaveBotaoRelatorio)
 
             self.varFrameLateralEsquerdo = tk.Frame(
                 self.root, bg=self.color4, highlightbackground=self.color1, highlightthickness=4)
