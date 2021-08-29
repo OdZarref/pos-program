@@ -1,5 +1,6 @@
 import tkinter as tk
 import sqlite3
+import os
 from tkinter import ttk, messagebox
 from libs.jsonlibs import *
 from datetime import datetime
@@ -636,15 +637,19 @@ class Aplicacao(CriarFrames, FuncoesGerais, EventosBotoes, BancoDeDados):
         self.root.mainloop()
 
     def config(self):
-        self.imagemLogo = tk.PhotoImage(file='images\logo.png')
+        if os.name == 'nt':
+            self.imagemLogo = tk.PhotoImage(file='images\logo.png')
+            self.root.iconbitmap('images\logo.ico')
+            self.root.state('zoomed')
+        else:
+            self.imagemLogo = tk.PhotoImage(file='images/logo.png')
+            #self.root.iconbitmap('images/logo.ico')
         self.color1 = '#34343F'
         self.color2 = '#2d2d30'
         self.color3 = '#9AF995'
         self.color4 = '#1c1c1c'
         self.root.title('Selli')
         self.root.iconphoto(False, self.imagemLogo)
-        self.root.iconbitmap('images\logo.ico')
-        self.root.state('zoomed')
         self.root.resizable(True, True)
         self.treeViewStyle = ttk.Style(self.root)
         self.treeViewStyle.theme_use('classic')
@@ -652,30 +657,34 @@ class Aplicacao(CriarFrames, FuncoesGerais, EventosBotoes, BancoDeDados):
     def frames(self):
         def frameLateralEsquerdo(self):
             def botoesLateraisEsquerdo(self):
-                self.botaoVendasImagem = tk.PhotoImage(file='images\sellL.png')
+                if os.name == 'nt':
+                    self.botaoVendasImagem = tk.PhotoImage(file='images\sellL.png')
+                    self.botaoEstoqueImagem = tk.PhotoImage(file='images\estoqueL.png')
+                    self.botaoCaixaImagem = tk.PhotoImage(file='images\caixaL.png')
+                    self.botaoRelatorioImagem = tk.PhotoImage(file='images\elatorioL.png')
+                else:
+                    self.botaoVendasImagem = tk.PhotoImage(file='images/sellL.png')
+                    self.botaoEstoqueImagem = tk.PhotoImage(file='images/estoqueL.png')
+                    self.botaoCaixaImagem = tk.PhotoImage(file='images/caixaL.png')
+                    self.botaoRelatorioImagem = tk.PhotoImage(file='images/elatorioL.png')
                 self.botaoVendas = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoVendasImagem,
                                              command=self.frameVendas, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoVendas.place(relx=0.24, rely=0.05)
                 self.botaoVendas.bind("<Enter>", self.hoverBotaoVendas)
                 self.botaoVendas.bind("<Leave>", self.leaveBotaoVendas)
 
-                self.botaoEstoqueImagem = tk.PhotoImage(
-                    file='images\estoqueL.png')
                 self.botaoEstoque = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoEstoqueImagem,
                                               command=self.frameEstoque, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoEstoque.place(relx=0.24, rely=0.15)
                 self.botaoEstoque.bind("<Enter>", self.hoverBotaoEstoque)
                 self.botaoEstoque.bind("<Leave>", self.leaveBotaoEstoque)
 
-                self.botaoCaixaImagem = tk.PhotoImage(file='images\caixaL.png')
                 self.botaoCaixa = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoCaixaImagem,
                                             command=self.frameCaixa, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoCaixa.place(relx=0.24, rely=0.25)
                 self.botaoCaixa.bind("<Enter>", self.hoverBotaoCaixa)
                 self.botaoCaixa.bind("<Leave>", self.leaveBotaoCaixa)
-
-                self.botaoRelatorioImagem = tk.PhotoImage(
-                    file='images\elatorioL.png')
+                
                 self.botaoRelatorio = tk.Button(self.varFrameLateralEsquerdo, image=self.botaoRelatorioImagem,
                                                 command=self.frameRelatorio, bg=self.color4, highlightthickness=0, bd=0)
                 self.botaoRelatorio.place(relx=0.24, rely=0.35)
